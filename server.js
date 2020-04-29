@@ -14,17 +14,17 @@ app.use(bodyParser.json())
 
 // MONGOOSE CONNECT
 // ===========================================================================
-mongoose.connect('mongodb://localhost:27017/local')
+mongoose.connect('mongodb://localhost:27017/todoApp')
 
 var db = mongoose.connection
-db.on('error', ()=> {console.log( '---Gethyl FAILED to connect to mongoose')})
+db.on('error', ()=> {console.log( '---FAILED to connect to mongoose')})
 db.once('open', () => {
-	console.log( '+++Gethyl connected to mongoose')
+	console.log( '+++ connected to mongoose')
 })
 
 var serve = http.createServer(app);
 var io = socketServer(serve);
-serve.listen(3000,()=> {console.log("+++Gethyl Express Server with Socket Running!!!")})
+serve.listen(3000,()=> {console.log("+++Express Server with Socket Running!!!")})
 
 
 /***************************************************************************************** */
@@ -40,16 +40,13 @@ io.on('connection', function (socket) {
 
 	var cursor = todoModel.find({},"-_id itemId item completed",(err,result)=>{
 				if (err){
-					console.log("---Gethyl GET failed!!")
+					console.log("---GET failed!!")
 				}
 				else {
 					socket.emit('initialList',result)
-					console.log("+++Gethyl GET worked!!")
+					console.log("+++GET worked!!")
 				}
 			})
-	// 		.cursor()
-	// cursor.on('data',(res)=> {socket.emit('initialList',res)})
-	
 	socket.on('addItem',(addData)=>{
 		var todoItem = new todoModel({
 			itemId:addData.id,
@@ -58,14 +55,23 @@ io.on('connection', function (socket) {
 		})
 
 		todoItem.save((err,result)=> {
-			if (err) {console.log("---Gethyl ADD NEW ITEM failed!! " + err)}
+			if (err) {console.log("--- ADD NEW ITEM failed!! " + err)}
 			else {
-				// connections.forEach((currentConnection)=>{
-				// 	currentConnection.emit('itemAdded',addData)
-				// })
 				io.emit('itemAdded',addData)
-				
-				console.log({message:"+++Gethyl ADD NEW ITEM worked!!"})
+
+				console.log({message:"+++ ADD NEW ITEM worked!!"})
+			}
+		})
+	})
+
+	socket.on('deleteAll',(addData)=>{
+
+		todoModel.deleteMany({},(err,result)=> {
+			if (err) {console.log("--- DELETE ALL ITEM failed!! " + err)}
+			else {
+				io.emit('allItemDeleted',addData)
+
+				console.log({message:"+++ DELETE ALL ITEM worked!!"})
 			}
 		})
 	})
@@ -75,14 +81,11 @@ io.on('connection', function (socket) {
 			updateValue = {completed:markedItem.completed}
 
 		todoModel.update(condition,updateValue,(err,result)=>{
-			if (err) {console.log("---Gethyl MARK COMPLETE failed!! " + err)}
+			if (err) {console.log("--- MARK COMPLETE failed!! " + err)}
 			else {
-				// connections.forEach((currentConnection)=>{
-				// 	currentConnection.emit('itemMarked',markedItem)
-				// })
 				io.emit('itemMarked',markedItem)
 
-				console.log({message:"+++Gethyl MARK COMPLETE worked!!"})
+				console.log({message:"+++MARK COMPLETE worked!!"})
 			}
 		})
 	})

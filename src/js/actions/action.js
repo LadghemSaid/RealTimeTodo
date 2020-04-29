@@ -7,6 +7,14 @@ export const AddItem = (data) => ({
 	completed:data.completed
 })
 
+
+export const DeleteAllItem = (data) => ({
+	type: "DELETE_ALL_ITEMS",
+	item: null,
+	itemId:null,
+	completed:null,
+})
+
 export const completeItem = (data) => ({
 	type: "COMPLETED_ITEM",
 	itemId: data.id,
@@ -51,4 +59,10 @@ export const markItemCompleteSocket = (socket,id,completedFlag) => {
 		     }
 		socket.emit('markItem',postData)
 	}	
+}
+
+export const deleteAllItemSocket = (socket) => {
+	return (dispatch) => {
+		socket.emit('deleteAll',null)
+	}
 }

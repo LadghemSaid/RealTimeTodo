@@ -3,7 +3,7 @@ import ReactDOM from "react-dom"
 import {connect} from 'react-redux'
 import {addNewItem,loadInitialData,markItemComplete
 	   ,loadInitialDataSocket,addNewItemSocket,markItemCompleteSocket
-	   ,AddItem,completeItem} from '../actions/action'
+	   ,AddItem,completeItem,deleteAllItemSocket,DeleteAllItem} from '../actions/action'
 import io from "socket.io-client"
 
 import TextField from 'material-ui/TextField'
@@ -45,6 +45,11 @@ export  class Layout extends React.Component{
 		   dispatch(AddItem(res))
 	   })
 
+	   socket.on('allItemDeleted',(res)=>{
+		   console.dir(res)
+		   dispatch(DeleteAllItem(res))
+	   })
+
 	   socket.on('itemMarked',(res)=>{
 		   console.dir(res)
 		   dispatch(completeItem(res))
@@ -61,24 +66,36 @@ export  class Layout extends React.Component{
 		
 		return (
 			<div>
-				<h1 style={robotFontStyle}>React TO-DO (Real-Time)</h1>
+				<h1 style={robotFontStyle}>React TO-DO </h1>
 				
                 <Divider/>
 				<TextField 
-					hintText="Add New Item"
-      				floatingLabelText="Enter the new item"
+					hintText="Titre du post it"
+      				floatingLabelText="Ajouter un titre"
 					ref="newTodo"
 				/>
-                {" "}
+				<TextField
+					hintText="Description du post it"
+					floatingLabelText="Ajouter une description"
+					ref="newTodo"
+				/>
 				<RaisedButton
-					label="Click to add!" primary={true}
+					label="Cliquer pour ajouter" primary={true}
 					onTouchTap={ () => {
                         const newItem = ReactDOM.findDOMNode(this.refs.newTodo.input).value
                         newItem === "" ?  alert("Item shouldn't be blank")
-						               :  dispatch(addNewItemSocket(socket,items.size,newItem)) 
-									    {/*: dispatch(addNewItem(items.size,newItem))*/}
+						               :  dispatch(addNewItemSocket(socket,items.size,newItem))
                         ReactDOM.findDOMNode(this.refs.newTodo.input).value = ""
 					  }
+					}
+				/>
+
+				<RaisedButton
+					label="Supprimer tout les post it" secondary={true}
+					onTouchTap={ () => {
+							dispatch(deleteAllItemSocket(socket))
+
+					}
 					}
 				/>
 				<List>{items.map((todo,key)=>{
