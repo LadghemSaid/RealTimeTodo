@@ -6,7 +6,8 @@ var Schema = mongoose.Schema;
 // create a schema
 var toDoSchema = new Schema({
     itemId: Number,
-    item: String,
+    title: String,
+    description: String,
     completed: Boolean
 }, {collection:"TodoList"});
 

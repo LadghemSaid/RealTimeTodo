@@ -1,8 +1,9 @@
-import axios from "axios"
+
 
 export const AddItem = (data) => ({
 	type: "ADD_ITEM",
-	item: data.item,
+	title: data.title,
+	description: data.description,
 	itemId:data.id,
 	completed:data.completed
 })
@@ -10,22 +11,27 @@ export const AddItem = (data) => ({
 
 export const DeleteAllItem = (data) => ({
 	type: "DELETE_ALL_ITEMS",
-	item: null,
-	itemId:null,
-	completed:null,
 })
 
-export const completeItem = (data) => ({
+export const MarkAllItem = (data) => ({
+	type: "MARK_ALL_ITEMS",
+	completed:data.completed
+})
+
+export const CompleteItem = (data) => ({
 	type: "COMPLETED_ITEM",
 	itemId: data.id,
 	completed:data.completed
 })
 
 /* Used only by actions for sockets */
-export const initialItems = (res) => ({
-	type: "INITIAL_ITEMS",
-	items: res
-})
+export const InitialItems = (res) => {
+	console.log("initialItems ::",res)
+	return({
+		type: "INITIAL_ITEMS",
+		items: res
+	})
+}
 
 /***************************************************************************************** */
 /* Async Action items using - Sockets													   */
@@ -34,8 +40,8 @@ export const loadInitialDataSocket = (socket) => {
 	return (dispatch) => {
 		// dispatch(clearAllItems())
 		socket.on('initialList',(res)=>{
-		   console.dir(res)
-		   dispatch(initialItems(res))
+		   console.log('initialList ::',res)
+		   dispatch(InitialItems(res))
 	   })
 	}	
 }
@@ -44,7 +50,8 @@ export const addNewItemSocket = (socket,id,item) => {
 	return (dispatch) => {
 		let postData = {
 				id:id+1,
-				item:item,
+				title:item.title,
+				description:item.description,
 				completed:false
 		     }
 	    socket.emit('addItem',postData)		
@@ -61,8 +68,20 @@ export const markItemCompleteSocket = (socket,id,completedFlag) => {
 	}	
 }
 
+export const markAllItemSocket = (socket,completedFlag) => {
+	return (dispatch) => {
+		let postData = {
+			completed:completedFlag
+		}
+		socket.emit('markAll',postData)
+	}
+}
+
 export const deleteAllItemSocket = (socket) => {
 	return (dispatch) => {
 		socket.emit('deleteAll',null)
 	}
 }
+
+
+

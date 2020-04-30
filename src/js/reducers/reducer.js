@@ -9,13 +9,26 @@ const reducer = (state = initialState, action) => {
         case 'ADD_ITEM':
             return {
                 ...state,
-                items: state.items.push({id: action.itemId, item: action.item, completed: action.completed})
+                items: state.items.push({
+                    id: action.itemId,
+                    title: action.title,
+                    description: action.description,
+                    completed: action.completed
+                })
             }
 
         case 'DELETE_ALL_ITEMS':
             return {
                 ...state,
                 items: List(action.items)
+            }
+        case 'MARK_ALL_ITEMS':
+            console.log("MARK_ALL_ITEMS :" , action)
+            return {
+                ...state,
+                items: state.items.map( (value) => {
+                    return {...value, completed: action.completed}
+                })
             }
         case 'COMPLETED_ITEM':
             return {
