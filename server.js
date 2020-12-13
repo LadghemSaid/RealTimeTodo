@@ -14,7 +14,7 @@ app.use(bodyParser.json())
 
 // MONGOOSE CONNECT
 // ===========================================================================
-mongoose.connect('mongodb://localhost:27017/todoApp', {
+mongoose.connect('mongodb://mongodb:27017/todoApp2', {
     useMongoClient: true,
 })
 

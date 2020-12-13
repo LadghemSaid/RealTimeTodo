@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "webpack-dev-server --content-base --inline --hot ",
+    "build": "webpack",
     "server": "babel-node  server.js",
     "server2": "nodemon server.js",
     "server+client": "babel-node server.js | yarn start"
