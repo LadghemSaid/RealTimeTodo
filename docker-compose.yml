@@ -2,15 +2,14 @@ version: "3.3"
 
 services:
   real-time-todo:
+    env_file: ../secrets/real-time-todo/real-time-todo.env
     container_name: real-time-todo
-    build: ./
+    build: ./app
     volumes:
-      - ".:/app"
+      - "./app:/app"
       - "/app/node_modules"
     expose:
       - "8080"
-    environment:
-         VIRTUAL_HOST: real-time-todo.s-website.ga
     networks:
       - nginx_main
       - backend
